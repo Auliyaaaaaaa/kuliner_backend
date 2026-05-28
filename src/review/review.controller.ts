@@ -1,0 +1,27 @@
+import { Controller, Get, Post, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import { ReviewService } from './review.service';
+import { AuthGuard } from '../auth/guards/auth.guard';
+
+@Controller('api/reviews')
+@UseGuards(AuthGuard) // Semua endpoint ulasan butuh login
+export class ReviewController {
+  constructor(private readonly reviewService: ReviewService) {}
+
+  @Post()
+  async create(@Req() req: any, @Body() body: any) {
+    const userId = req.user.id;
+    return this.reviewService.createReview(userId, body);
+  }
+
+  @Get('food/:foodId')
+  async getByFood(@Param('foodId') foodId: string) {
+    return this.reviewService.getReviewsByFood(foodId);
+  }
+
+  @Delete(':id')
+  async delete(@Req() req: any, @Param('id') id: string) {
+    const userId = req.user.id;
+    const userRole = req.user.role;
+    return this.reviewService.deleteReview(id, userId, userRole);
+  }
+}
