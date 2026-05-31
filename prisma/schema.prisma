@@ -11,7 +11,7 @@ model User {
   username        String   @unique
   name            String
   password        String
-  customerNumber  String   @unique
+  customerNumber  String?
   address         String
   phone           String
   role            Role     @default(USER)
@@ -34,7 +34,6 @@ model Food {
   name        String
   description String?
   price       Decimal
-  image_url   String?
   avgRating   Decimal  @default(0)
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  Int

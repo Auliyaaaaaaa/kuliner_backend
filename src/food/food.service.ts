@@ -3,7 +3,7 @@ import { DatabaseService } from '../database/database.service';
 
 @Injectable()
 export class FoodService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
   async getAllFoods(query: any) {
     const { category, minPrice, maxPrice, search, sort } = query;
@@ -11,13 +11,13 @@ export class FoodService {
     let sql = `
       SELECT foods.*, categories.name as category_name 
       FROM foods 
-      LEFT JOIN categories ON foods.category_id = categories.id
+      LEFT JOIN categories ON foods.categoryId = categories.id
       WHERE 1=1
     `;
     const params: any[] = [];
 
     if (category) {
-      sql += ' AND foods.category_id = ?';
+      sql += ' AND foods.categoryId = ?';
       params.push(category);
     }
     if (minPrice) {
@@ -33,7 +33,7 @@ export class FoodService {
       params.push(`%${search}%`);
     }
     if (sort === 'rating') {
-      sql += ' ORDER BY foods.avg_rating DESC';
+      sql += ' ORDER BY foods.avgRating DESC';
     }
 
     const [foods] = await this.db.query(sql, params);
@@ -43,9 +43,9 @@ export class FoodService {
   async getFoodById(id: string) {
     const [foods] = await this.db.query(
       `SELECT foods.*, categories.name as category_name 
-       FROM foods 
-       LEFT JOIN categories ON foods.category_id = categories.id
-       WHERE foods.id = ?`,
+      FROM foods 
+      LEFT JOIN categories ON foods.categoryId = categories.id
+      WHERE foods.id = ?`,
       [id]
     );
 
@@ -57,22 +57,22 @@ export class FoodService {
   }
 
   async createFood(body: any) {
-    const { name, description, price, image_url, category_id } = body;
+    const { name, description, price, image_url, categoryId } = body;
 
-    if (!name || !price || !category_id) {
+    if (!name || !price || !categoryId) {
       throw new BadRequestException('Nama, harga, dan kategori wajib diisi!');
     }
 
     await this.db.query(
-      'INSERT INTO foods (name, description, price, image_url, category_id) VALUES (?, ?, ?, ?, ?)',
-      [name, description || null, price, image_url || null, category_id]
+      'INSERT INTO foods (name, description, price, image_url, categoryId) VALUES (?, ?, ?, ?, ?)',
+      [name, description || null, price, image_url || null, categoryId]
     );
 
     return { message: 'Makanan berhasil ditambahkan!' };
   }
 
   async updateFood(id: string, body: any) {
-    const { name, description, price, image_url, category_id } = body;
+    const { name, description, price, image_url, categoryId } = body;
 
     const [existing] = await this.db.query('SELECT * FROM foods WHERE id = ?', [id]);
     if (existing.length === 0) {
@@ -80,13 +80,13 @@ export class FoodService {
     }
 
     await this.db.query(
-      'UPDATE foods SET name=?, description=?, price=?, image_url=?, category_id=? WHERE id=?',
+      'UPDATE foods SET name=?, description=?, price=?, image_url=?, categoryId=? WHERE id=?',
       [
         name !== undefined ? name : existing[0].name,
         description !== undefined ? description : existing[0].description,
         price !== undefined ? price : existing[0].price,
         image_url !== undefined ? image_url : existing[0].image_url,
-        category_id !== undefined ? category_id : existing[0].category_id,
+        categoryId !== undefined ? categoryId : existing[0].categoryId,
         id,
       ]
     );
