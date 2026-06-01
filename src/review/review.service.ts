@@ -35,6 +35,17 @@ export class ReviewService {
     return { message: 'Ulasan berhasil ditambahkan!' };
   }
 
+  async getAllReviews() {
+    const [reviews] = await this.db.query(
+      `SELECT reviews.*, users.name as user_name, foods.name as food_name
+     FROM reviews
+     LEFT JOIN users ON reviews.userId = users.id
+     LEFT JOIN foods ON reviews.foodId = foods.id
+     ORDER BY reviews.createdAt DESC`
+    );
+    return reviews;
+  }
+
   async getReviewsByFood(foodId: string) {
     const [reviews] = await this.db.query(
       `SELECT reviews.*, users.name as user_name 
