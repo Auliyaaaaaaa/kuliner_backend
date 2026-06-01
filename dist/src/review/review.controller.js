@@ -16,25 +16,33 @@ exports.ReviewController = void 0;
 const common_1 = require("@nestjs/common");
 const review_service_1 = require("./review.service");
 const auth_guard_1 = require("../auth/guards/auth.guard");
+const admin_guard_1 = require("../auth/guards/admin.guard");
 let ReviewController = class ReviewController {
     reviewService;
     constructor(reviewService) {
         this.reviewService = reviewService;
     }
+    async getAll() {
+        return this.reviewService.getAllReviews();
+    }
     async create(req, body) {
-        const userId = req.user.id;
-        return this.reviewService.createReview(userId, body);
+        return this.reviewService.createReview(req.user.id, body);
     }
     async getByFood(foodId) {
         return this.reviewService.getReviewsByFood(foodId);
     }
     async delete(req, id) {
-        const userId = req.user.id;
-        const userRole = req.user.role;
-        return this.reviewService.deleteReview(id, userId, userRole);
+        return this.reviewService.deleteReview(id, req.user.id, req.user.role);
     }
 };
 exports.ReviewController = ReviewController;
+__decorate([
+    (0, common_1.Get)(),
+    (0, common_1.UseGuards)(admin_guard_1.AdminGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ReviewController.prototype, "getAll", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Req)()),

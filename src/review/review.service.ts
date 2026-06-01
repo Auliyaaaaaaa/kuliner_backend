@@ -68,17 +68,19 @@ export class ReviewService {
     const review = existing[0];
 
     // Pastikan yang menghapus adalah pemilik ulasan ATAU admin
-    if (review.user_id !== userId && userRole !== 'ADMIN') {
-      throw new ForbiddenException('Akses ditolak! Kamu tidak bisa menghapus ulasan orang lain.');
+    if (Number(review.userId) !== Number(userId) && userRole !== 'ADMIN') {
+      {
+        throw new ForbiddenException('Akses ditolak! Kamu tidak bisa menghapus ulasan orang lain.');
+      }
+
+      // Hapus ulasan
+      await this.db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
+
+      // Hitung ulang dan update avg_rating
+      await this.recalculateFoodAvgRating(review.foodId);
+
+      return { message: 'Ulasan berhasil dihapus!' };
     }
-
-    // Hapus ulasan
-    await this.db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
-
-    // Hitung ulang dan update avg_rating
-    await this.recalculateFoodAvgRating(review.foodId);
-
-    return { message: 'Ulasan berhasil dihapus!' };
   }
 
   // Helper untuk menghitung ulang avg_rating di tabel foods

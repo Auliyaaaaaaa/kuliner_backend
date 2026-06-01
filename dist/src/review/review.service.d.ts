@@ -5,9 +5,10 @@ export declare class ReviewService {
     createReview(userId: number, body: any): Promise<{
         message: string;
     }>;
+    getAllReviews(): Promise<any>;
     getReviewsByFood(foodId: string): Promise<any>;
     deleteReview(reviewId: string, userId: number, userRole: string): Promise<{
         message: string;
-    }>;
+    } | undefined>;
     private recalculateFoodAvgRating;
 }
