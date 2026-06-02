@@ -19,6 +19,11 @@ export class FoodController {
     return this.foodService.getPendingFoods();
   }
 
+  @Get('my-submissions')
+  async getMySubmissions(@Req() req: any) {
+    return this.foodService.getMySubmissions(req.user.id);
+  }
+
   @Get(':id')
   async getById(@Param('id') id: string) {
     return this.foodService.getFoodById(id);

@@ -144,4 +144,15 @@ export class FoodService {
     await this.db.query('UPDATE foods SET status = "REJECTED" WHERE id = ?', [id]);
     return { message: 'Makanan berhasil direject!' };
   }
+
+  async getMySubmissions(userId: number) {
+    const [foods] = await this.db.query(
+      `SELECT foods.*, categories.name as category_name
+     FROM foods
+     LEFT JOIN categories ON foods.categoryId = categories.id
+     WHERE foods.submittedBy = ?`,
+      [userId]
+    );
+    return foods;
+  }
 }
