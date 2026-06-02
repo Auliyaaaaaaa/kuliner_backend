@@ -1,16 +1,22 @@
-import { Controller, Get, Post, Put, Delete, Body, Query, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Query, Param, UseGuards, Req } from '@nestjs/common';
 import { FoodService } from './food.service';
 import { AuthGuard } from '../auth/guards/auth.guard';
 import { AdminGuard } from '../auth/guards/admin.guard';
 
 @Controller('api/foods')
-@UseGuards(AuthGuard) // Semua endpoint di controller ini butuh login minimal (user/admin)
+@UseGuards(AuthGuard)
 export class FoodController {
-  constructor(private readonly foodService: FoodService) {}
+  constructor(private readonly foodService: FoodService) { }
 
   @Get()
   async getAll(@Query() query: any) {
     return this.foodService.getAllFoods(query);
+  }
+
+  @Get('pending')
+  @UseGuards(AdminGuard)
+  async getPending() {
+    return this.foodService.getPendingFoods();
   }
 
   @Get(':id')
@@ -19,19 +25,36 @@ export class FoodController {
   }
 
   @Post()
-  @UseGuards(AdminGuard) // Hanya admin yang boleh tambah
+  @UseGuards(AdminGuard)
   async create(@Body() body: any) {
     return this.foodService.createFood(body);
   }
 
+  @Post('submit')
+  async submit(@Body() body: any, @Req() req: any) {
+    return this.foodService.submitFood(body, req.user.id);
+  }
+
+  @Put(':id/approve')
+  @UseGuards(AdminGuard)
+  async approve(@Param('id') id: string) {
+    return this.foodService.approveFood(id);
+  }
+
+  @Put(':id/reject')
+  @UseGuards(AdminGuard)
+  async reject(@Param('id') id: string) {
+    return this.foodService.rejectFood(id);
+  }
+
   @Put(':id')
-  @UseGuards(AdminGuard) // Hanya admin yang boleh edit
+  @UseGuards(AdminGuard)
   async update(@Param('id') id: string, @Body() body: any) {
     return this.foodService.updateFood(id, body);
   }
 
   @Delete(':id')
-  @UseGuards(AdminGuard) // Hanya admin yang boleh hapus
+  @UseGuards(AdminGuard)
   async delete(@Param('id') id: string) {
     return this.foodService.deleteFood(id);
   }

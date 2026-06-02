@@ -32,7 +32,10 @@ let ReviewController = class ReviewController {
         return this.reviewService.getReviewsByFood(foodId);
     }
     async delete(req, id) {
-        return this.reviewService.deleteReview(id, req.user.id, req.user.role);
+        const userId = req.user.id;
+        const userRole = req.user.role;
+        const result = await this.reviewService.deleteReview(id, userId, userRole);
+        return result;
     }
 };
 exports.ReviewController = ReviewController;

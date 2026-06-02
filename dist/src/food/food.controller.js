@@ -25,11 +25,23 @@ let FoodController = class FoodController {
     async getAll(query) {
         return this.foodService.getAllFoods(query);
     }
+    async getPending() {
+        return this.foodService.getPendingFoods();
+    }
     async getById(id) {
         return this.foodService.getFoodById(id);
     }
     async create(body) {
         return this.foodService.createFood(body);
+    }
+    async submit(body, req) {
+        return this.foodService.submitFood(body, req.user.id);
+    }
+    async approve(id) {
+        return this.foodService.approveFood(id);
+    }
+    async reject(id) {
+        return this.foodService.rejectFood(id);
     }
     async update(id, body) {
         return this.foodService.updateFood(id, body);
@@ -47,6 +59,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FoodController.prototype, "getAll", null);
 __decorate([
+    (0, common_1.Get)('pending'),
+    (0, common_1.UseGuards)(admin_guard_1.AdminGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], FoodController.prototype, "getPending", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -61,6 +80,30 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], FoodController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('submit'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], FoodController.prototype, "submit", null);
+__decorate([
+    (0, common_1.Put)(':id/approve'),
+    (0, common_1.UseGuards)(admin_guard_1.AdminGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], FoodController.prototype, "approve", null);
+__decorate([
+    (0, common_1.Put)(':id/reject'),
+    (0, common_1.UseGuards)(admin_guard_1.AdminGuard),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], FoodController.prototype, "reject", null);
 __decorate([
     (0, common_1.Put)(':id'),
     (0, common_1.UseGuards)(admin_guard_1.AdminGuard),

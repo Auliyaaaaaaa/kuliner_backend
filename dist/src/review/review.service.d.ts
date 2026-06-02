@@ -9,6 +9,6 @@ export declare class ReviewService {
     getReviewsByFood(foodId: string): Promise<any>;
     deleteReview(reviewId: string, userId: number, userRole: string): Promise<{
         message: string;
-    } | undefined>;
+    }>;
     private recalculateFoodAvgRating;
 }

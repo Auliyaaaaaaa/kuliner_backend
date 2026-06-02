@@ -35,18 +35,18 @@ let ReviewService = class ReviewService {
     }
     async getAllReviews() {
         const [reviews] = await this.db.query(`SELECT reviews.*, users.name as user_name, foods.name as food_name
-     FROM reviews
-     LEFT JOIN users ON reviews.userId = users.id
-     LEFT JOIN foods ON reviews.foodId = foods.id
-     ORDER BY reviews.createdAt DESC`);
+       FROM reviews
+       LEFT JOIN users ON reviews.userId = users.id
+       LEFT JOIN foods ON reviews.foodId = foods.id
+       ORDER BY reviews.createdAt DESC`);
         return reviews;
     }
     async getReviewsByFood(foodId) {
         const [reviews] = await this.db.query(`SELECT reviews.*, users.name as user_name 
-     FROM reviews 
-     LEFT JOIN users ON reviews.userId = users.id 
-     WHERE reviews.foodId = ? 
-     ORDER BY reviews.createdAt DESC`, [foodId]);
+       FROM reviews 
+       LEFT JOIN users ON reviews.userId = users.id 
+       WHERE reviews.foodId = ? 
+       ORDER BY reviews.createdAt DESC`, [foodId]);
         return reviews;
     }
     async deleteReview(reviewId, userId, userRole) {
@@ -56,13 +56,11 @@ let ReviewService = class ReviewService {
         }
         const review = existing[0];
         if (Number(review.userId) !== Number(userId) && userRole !== 'ADMIN') {
-            {
-                throw new common_1.ForbiddenException('Akses ditolak! Kamu tidak bisa menghapus ulasan orang lain.');
-            }
-            await this.db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
-            await this.recalculateFoodAvgRating(review.foodId);
-            return { message: 'Ulasan berhasil dihapus!' };
+            throw new common_1.ForbiddenException('Akses ditolak! Kamu tidak bisa menghapus ulasan orang lain.');
         }
+        await this.db.query('DELETE FROM reviews WHERE id = ?', [reviewId]);
+        await this.recalculateFoodAvgRating(review.foodId);
+        return { message: 'Review berhasil dihapus!' };
     }
     async recalculateFoodAvgRating(foodId) {
         const [avgResult] = await this.db.query('SELECT AVG(rating) as avgRating FROM reviews WHERE foodId = ?', [foodId]);

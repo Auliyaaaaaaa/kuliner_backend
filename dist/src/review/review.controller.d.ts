@@ -9,5 +9,5 @@ export declare class ReviewController {
     getByFood(foodId: string): Promise<any>;
     delete(req: any, id: string): Promise<{
         message: string;
-    } | undefined>;
+    }>;
 }

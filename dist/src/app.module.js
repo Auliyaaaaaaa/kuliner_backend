@@ -25,7 +25,7 @@ exports.AppModule = AppModule = __decorate([
             category_module_1.CategoryModule,
             food_module_1.FoodModule,
             review_module_1.ReviewModule,
-            user_module_1.UserModule,
+            user_module_1.UserModule
         ],
     })
 ], AppModule);

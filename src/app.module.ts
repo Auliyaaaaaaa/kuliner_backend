@@ -6,6 +6,7 @@ import { FoodModule } from './food/food.module';
 import { ReviewModule } from './review/review.module';
 import { UserModule } from './user/user.module';
 
+
 @Module({
   imports: [
     DatabaseModule,
@@ -13,7 +14,8 @@ import { UserModule } from './user/user.module';
     CategoryModule,
     FoodModule,
     ReviewModule,
-    UserModule,
+    UserModule
+
   ],
 })
 export class AppModule { }

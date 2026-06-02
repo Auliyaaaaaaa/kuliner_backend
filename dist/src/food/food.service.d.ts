@@ -13,4 +13,14 @@ export declare class FoodService {
     deleteFood(id: string): Promise<{
         message: string;
     }>;
+    submitFood(body: any, userId: number): Promise<{
+        message: string;
+    }>;
+    getPendingFoods(): Promise<any>;
+    approveFood(id: string): Promise<{
+        message: string;
+    }>;
+    rejectFood(id: string): Promise<{
+        message: string;
+    }>;
 }

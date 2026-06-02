@@ -12,7 +12,7 @@ export class FoodService {
       SELECT foods.*, categories.name as category_name 
       FROM foods 
       LEFT JOIN categories ON foods.categoryId = categories.id
-      WHERE 1=1
+      WHERE foods.status = 'APPROVED'
     `;
     const params: any[] = [];
 
@@ -102,5 +102,46 @@ export class FoodService {
 
     await this.db.query('DELETE FROM foods WHERE id = ?', [id]);
     return { message: 'Makanan berhasil dihapus!' };
+  }
+
+  // Customer submit makanan (status default PENDING)
+  async submitFood(body: any, userId: number) {
+    const { name, description, price, image_url, categoryId } = body;
+    if (!name || !price || !categoryId) {
+      throw new BadRequestException('Nama, harga, dan kategori wajib diisi!');
+    }
+    await this.db.query(
+      'INSERT INTO foods (name, description, price, image_url, categoryId, status, submittedBy) VALUES (?, ?, ?, ?, ?, "PENDING", ?)',
+      [name, description || null, price, image_url || null, categoryId, userId]
+    );
+    return { message: 'Makanan berhasil diajukan, menunggu verifikasi admin!' };
+  }
+
+  // Admin lihat semua makanan pending
+  async getPendingFoods() {
+    const [foods] = await this.db.query(
+      `SELECT foods.*, categories.name as category_name, users.username as submitter_name
+     FROM foods
+     LEFT JOIN categories ON foods.categoryId = categories.id
+     LEFT JOIN users ON foods.submittedBy = users.id
+     WHERE foods.status = 'PENDING'`
+    );
+    return foods;
+  }
+
+  // Admin approve makanan
+  async approveFood(id: string) {
+    const [existing] = await this.db.query('SELECT * FROM foods WHERE id = ?', [id]);
+    if (existing.length === 0) throw new NotFoundException('Makanan tidak ditemukan!');
+    await this.db.query('UPDATE foods SET status = "APPROVED" WHERE id = ?', [id]);
+    return { message: 'Makanan berhasil diapprove!' };
+  }
+
+  // Admin reject makanan
+  async rejectFood(id: string) {
+    const [existing] = await this.db.query('SELECT * FROM foods WHERE id = ?', [id]);
+    if (existing.length === 0) throw new NotFoundException('Makanan tidak ditemukan!');
+    await this.db.query('UPDATE foods SET status = "REJECTED" WHERE id = ?', [id]);
+    return { message: 'Makanan berhasil direject!' };
   }
 }

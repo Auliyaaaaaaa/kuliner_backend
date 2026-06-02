@@ -16,6 +16,7 @@ model User {
   phone           String
   role            Role     @default(USER)
   reviews         Review[]
+  submissions Food[] 
   createdAt       DateTime @default(now())
 
   @@map("users")
@@ -34,12 +35,21 @@ model Food {
   name        String
   description String?
   price       Decimal
+  image_url   String?
   avgRating   Decimal  @default(0)
+  status      FoodStatus @default(PENDING)
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  Int
+  submittedBy Int?
+  submitter   User?    @relation(fields: [submittedBy], references: [id])
   reviews     Review[]
 
   @@map("foods")
+}
+enum FoodStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model Review {
@@ -59,3 +69,4 @@ enum Role {
   USER
   ADMIN
 }
+
