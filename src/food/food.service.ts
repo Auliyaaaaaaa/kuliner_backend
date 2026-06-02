@@ -155,4 +155,16 @@ export class FoodService {
     );
     return foods;
   }
+
+  async getAllSubmissions() {
+    const [foods] = await this.db.query(
+      `SELECT foods.*, categories.name as category_name, users.username as submitter_name
+     FROM foods
+     LEFT JOIN categories ON foods.categoryId = categories.id
+     LEFT JOIN users ON foods.submittedBy = users.id
+     WHERE foods.submittedBy IS NOT NULL
+     ORDER BY foods.status ASC, foods.id DESC`
+    );
+    return foods;
+  }
 }

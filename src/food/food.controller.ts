@@ -23,6 +23,11 @@ export class FoodController {
   async getMySubmissions(@Req() req: any) {
     return this.foodService.getMySubmissions(req.user.id);
   }
+  @Get('all-submissions')
+  @UseGuards(AdminGuard)
+  async getAllSubmissions() {
+    return this.foodService.getAllSubmissions();
+  }
 
   @Get(':id')
   async getById(@Param('id') id: string) {
