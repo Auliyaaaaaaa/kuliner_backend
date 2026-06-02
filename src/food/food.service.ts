@@ -64,7 +64,7 @@ export class FoodService {
     }
 
     await this.db.query(
-      'INSERT INTO foods (name, description, price, image_url, categoryId) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO foods (name, description, price, image_url, categoryId, status) VALUES (?, ?, ?, ?, ?, "APPROVED")',
       [name, description || null, price, image_url || null, categoryId]
     );
 
